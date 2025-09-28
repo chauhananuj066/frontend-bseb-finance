@@ -1,0 +1,9 @@
+// pages/_index.scss
+
+// Only import shared/common page styles here
+// Keep individual pages separate (like dashboard)
+//@import 'common';
+
+@use 'dashboard';
+@use 'users';
+// @use 'invoices';

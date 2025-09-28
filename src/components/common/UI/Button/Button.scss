@@ -1,0 +1,74 @@
+@use '../../../../styles/scss/abstracts/mixins' as *;
+@use '../../../../styles/scss/abstracts' as *;
+
+.custom-btn {
+  @include button-base;
+
+  &.btn-primary {
+    @include button-variant(var(--color-primary), var(--color-white), var(--color-primary-dark));
+  }
+
+  &.btn-secondary {
+    @include button-variant(
+      var(--color-secondary),
+      var(--color-white),
+      var(--color-secondary-dark)
+    );
+  }
+
+  &.btn-success {
+    @include button-variant(var(--color-success), var(--color-white), #16a34a);
+  }
+
+  &.btn-danger {
+    @include button-variant(var(--color-error), var(--color-white), #dc2626);
+  }
+
+  &.btn-outline-primary {
+    background: transparent;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+  }
+
+  // Sizes
+  &.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  &.btn-lg {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+  }
+
+  // Loading state
+  &.btn-loading {
+    .btn-text {
+      opacity: 0.7;
+    }
+  }
+
+  // Icon spacing
+  .btn-icon {
+    display: flex;
+    align-items: center;
+
+    &.btn-icon-left {
+      margin-right: var(--spacing-xs);
+    }
+
+    &.btn-icon-right {
+      margin-left: var(--spacing-xs);
+    }
+  }
+
+  &.btn-icon-only {
+    padding: var(--spacing-sm);
+    aspect-ratio: 1;
+  }
+}

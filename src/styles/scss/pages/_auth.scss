@@ -1,0 +1,171 @@
+// Authentication pages
+
+@import '../abstracts/mixins'; // Needed for respond-to mixin
+
+.auth-layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 1200px;
+
+  .login-brand-side {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(29, 78, 216, 0.9));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl);
+
+    .brand-content {
+      text-align: center;
+      color: var(--color-white);
+
+      .brand-logo {
+        margin-bottom: var(--spacing-xl);
+
+        img {
+          height: 80px;
+          width: auto;
+        }
+      }
+
+      .brand-title {
+        font-size: var(--font-size-4xl);
+        font-weight: 700;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .brand-subtitle {
+        font-size: var(--font-size-lg);
+        opacity: 0.9;
+        margin-bottom: var(--spacing-2xl);
+      }
+
+      .brand-features {
+        .feature-item {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md);
+          margin-bottom: var(--spacing-lg);
+
+          .feature-icon {
+            font-size: 2rem;
+          }
+
+          span:last-child {
+            font-size: var(--font-size-lg);
+          }
+        }
+      }
+    }
+  }
+
+  .login-form-side {
+    background: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl);
+  }
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card {
+  border: none;
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-xl);
+
+  .card-body {
+    padding: var(--spacing-2xl);
+  }
+}
+
+.login-logo {
+  text-align: center;
+
+  img {
+    height: 60px;
+    width: auto;
+  }
+}
+
+.login-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: var(--spacing-xs);
+}
+
+.login-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-xl);
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+
+  &:hover {
+    color: var(--color-gray-700);
+  }
+}
+
+.forgot-password-link,
+.register-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.login-footer {
+  .text-muted {
+    font-size: var(--font-size-xs);
+  }
+}
+
+// Responsive design for auth pages
+@include respond-to(tablet) {
+  .login-container {
+    .login-brand-side {
+      display: none;
+    }
+
+    .login-form-side {
+      padding: var(--spacing-lg);
+    }
+  }
+}
+
+@include respond-to(mobile) {
+  .auth-layout {
+    padding: var(--spacing-md);
+  }
+
+  .login-form-container {
+    .login-card .card-body {
+      padding: var(--spacing-lg);
+    }
+  }
+}

@@ -1,0 +1,11 @@
+// Modern Bootstrap import
+@use 'bootstrap/scss/bootstrap' as *;
+
+// Modern custom imports using @use
+@use 'abstracts' as *;
+@use 'base';
+@use 'layout';
+@use 'components';
+@use 'pages';
+@use 'themes';
+@use 'utilities';

@@ -1,0 +1,159 @@
+@import '../../styles/scss/abstracts/mixins';
+
+.dashboard-page {
+  .dashboard-header {
+    .page-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--color-gray-900);
+    }
+
+    .page-subtitle {
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+    }
+
+    .dashboard-actions {
+      @include respond-to(mobile) {
+        margin-top: 1rem;
+        align-self: stretch;
+
+        .d-flex {
+          flex-direction: column;
+          width: 100%;
+
+          .btn {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  .quick-actions-section {
+    .quick-action-card {
+      transition: all 0.2s ease;
+      cursor: pointer;
+      background: var(--color-white);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--color-primary) !important;
+      }
+
+      .quick-action-icon {
+        font-size: 2rem;
+        line-height: 1;
+      }
+
+      h6 {
+        font-weight: 600;
+        color: var(--color-gray-800);
+      }
+
+      small {
+        font-size: var(--font-size-xs);
+      }
+    }
+  }
+}
+
+// Card specific styles
+.recent-invoices-card,
+.pending-approvals-card,
+.revenue-chart-card,
+.payment-summary-card {
+  border: none;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-header {
+    border-bottom: 1px solid var(--color-gray-200);
+    background: var(--color-gray-50) !important;
+
+    h5 {
+      color: var(--color-gray-800);
+      font-weight: 600;
+    }
+  }
+}
+
+// Payment status items
+.payment-status-item {
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+// Progress bar customization
+.progress-sm {
+  height: 6px;
+
+  .progress-bar {
+    transition: width 0.6s ease;
+  }
+}
+
+// Responsive adjustments
+@include respond-to(mobile) {
+  .dashboard-page {
+    .dashboard-header {
+      .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .quick-actions-section {
+    .quick-action-card {
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+// Dark theme support
+.theme-dark {
+  .dashboard-page {
+    .quick-action-card {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+      color: var(--color-white);
+
+      &:hover {
+        border-color: var(--color-primary);
+      }
+
+      h6 {
+        color: var(--color-white);
+      }
+    }
+  }
+
+  .recent-invoices-card,
+  .pending-approvals-card,
+  .revenue-chart-card,
+  .payment-summary-card {
+    background: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+
+    .card-header {
+      background: var(--color-gray-700) !important;
+      border-color: var(--color-gray-600);
+
+      h5 {
+        color: var(--color-white);
+      }
+    }
+  }
+}

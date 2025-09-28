@@ -1,0 +1,10 @@
+// layout/_index.scss
+
+// @import 'header';
+// @import 'footer';
+// @import 'sidebar';
+
+@use 'header';
+@use 'sidebar';
+// @use 'main';
+@use 'footer';

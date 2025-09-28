@@ -1,0 +1,334 @@
+@use '../abstracts/variables' as *;
+
+// pages/_users.scss
+.users-page,
+.departments-page,
+.create-user-page,
+.edit-user-page {
+  .page-header {
+    .page-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--color-gray-900);
+    }
+
+    .page-subtitle {
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+    }
+
+    .page-actions {
+      @include respond-above(mobile) {
+        margin-top: 1rem;
+        width: 100%;
+      }
+    }
+  }
+
+  .stats-card {
+    border: none;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .stats-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--border-radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-gray-900);
+      margin-bottom: 0;
+    }
+  }
+}
+
+// User Form Specific Styles
+.user-form-card,
+.department-form-card {
+  border: none;
+  box-shadow: var(--shadow-md);
+
+  .card-header {
+    background: var(--color-gray-50);
+    border-bottom: 1px solid var(--color-gray-200);
+
+    h5 {
+      color: var(--color-gray-800);
+      font-weight: 600;
+    }
+  }
+
+  .form-section {
+    .form-section-title {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--color-gray-700);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--color-gray-100);
+    }
+  }
+
+  .form-actions {
+    background: var(--color-gray-50);
+    margin: -1rem -1.5rem -1.5rem;
+    padding: 1rem 1.5rem;
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  }
+}
+
+// Data Table Enhancements
+.data-table-wrapper {
+  .table {
+    thead th {
+      background-color: var(--color-gray-50);
+      border-bottom: 2px solid var(--color-gray-200);
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      color: var(--color-gray-700);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tbody tr {
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: var(--color-primary);
+        background-color: rgba(59, 130, 246, 0.04);
+      }
+
+      td {
+        vertical-align: middle;
+        border-bottom: 1px solid var(--color-gray-100);
+      }
+    }
+  }
+
+  .btn-group {
+    .btn {
+      border-radius: var(--border-radius-sm);
+
+      &:not(:first-child) {
+        margin-left: 0.25rem;
+      }
+    }
+  }
+}
+
+// Badge Enhancements
+.badge {
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  font-size: var(--font-size-xs);
+  border-radius: var(--border-radius-full);
+}
+
+// Loading States
+.user-form-loading {
+  .form-control,
+  .form-select {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border: none;
+    color: transparent;
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Responsive Design
+@include respond-above(mobile) {
+  .users-page,
+  .departments-page {
+    .stats-card {
+      margin-bottom: 1rem;
+    }
+
+    .page-header {
+      .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+      }
+    }
+  }
+
+  .create-user-page,
+  .edit-user-page {
+    .user-form-card {
+      .row {
+        margin: 0;
+
+        .col-md-6 {
+          padding: 0;
+          margin-bottom: 1rem;
+        }
+      }
+    }
+  }
+}
+
+// Dark Theme Support
+.theme-dark {
+  .users-page,
+  .departments-page,
+  .create-user-page,
+  .edit-user-page {
+    .stats-card {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+
+      h3 {
+        color: var(--color-white);
+      }
+
+      .stats-icon {
+        background: var(--color-gray-700);
+      }
+    }
+
+    .user-form-card,
+    .department-form-card {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+
+      .card-header {
+        background: var(--color-gray-700);
+        border-color: var(--color-gray-600);
+
+        h5 {
+          color: var(--color-white);
+        }
+      }
+
+      .form-section-title {
+        color: var(--color-gray-200);
+        border-color: var(--color-gray-600);
+      }
+
+      .form-actions {
+        background: var(--color-gray-700);
+      }
+    }
+  }
+
+  .data-table-wrapper {
+    .table {
+      thead th {
+        background-color: var(--color-gray-700);
+        color: var(--color-gray-200);
+        border-color: var(--color-gray-600);
+      }
+
+      tbody tr {
+        &:hover {
+          background-color: var(--color-gray-700);
+        }
+
+        td {
+          border-color: var(--color-gray-600);
+        }
+      }
+    }
+  }
+}
+
+// Animation Enhancements
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+// Modal Enhancements
+.modal {
+  .modal-content {
+    border: none;
+    box-shadow: var(--shadow-xl);
+    border-radius: var(--border-radius-xl);
+  }
+
+  .modal-header {
+    background: var(--color-gray-50);
+    border-bottom: 1px solid var(--color-gray-200);
+    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+
+    .modal-title {
+      font-weight: 600;
+      color: var(--color-gray-800);
+    }
+  }
+
+  .modal-body {
+    padding: 2rem;
+  }
+}
+
+// Print Styles
+@media print {
+  .users-page,
+  .departments-page {
+    .page-actions,
+    .data-table-controls,
+    .data-table-pagination {
+      display: none !important;
+    }
+
+    .stats-card {
+      break-inside: avoid;
+      box-shadow: none !important;
+      border: 1px solid #ddd;
+    }
+
+    .data-table-wrapper {
+      .table {
+        font-size: 12px;
+
+        th,
+        td {
+          padding: 0.25rem !important;
+        }
+      }
+    }
+  }
+}
