@@ -21,10 +21,16 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_BASE_URL || 'http://localhost:5000',
+        target: process.env.VITE_API_BASE_URL || 'http://localhost:7020',
         changeOrigin: true,
         secure: false
-      }
+      },
+      '/vendor-api': {
+      target: 'http://erp.biharboardonline.com/ERP_DataAPI',
+      changeOrigin: true,
+      secure: false,
+      rewrite: (path) => path.replace(/^\/vendor-api/, '')
+    }
     }
   },
   css: {

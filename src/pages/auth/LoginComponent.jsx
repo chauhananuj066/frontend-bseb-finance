@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getCaptchaAsync, loginAsync, clearError } from '../../store/slices/authSlice';
 import { setUserData, setSessionId } from '../../services/api/client';
-
 import { toast } from 'react-hot-toast';
 import './LoginComponent.css';
 
@@ -219,7 +218,7 @@ const Login = ({
   const handleRefreshCaptcha = () => {
     setFormData((prev) => ({ ...prev, captcha: '' }));
     dispatch(getCaptchaAsync());
-    toast.info('Security code refreshed', { duration: 2000 });
+    toast.success('Security code refreshed', { duration: 2000 });
   };
 
   // Keyboard shortcuts

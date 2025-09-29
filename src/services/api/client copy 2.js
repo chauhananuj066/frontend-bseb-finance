@@ -1,38 +1,16 @@
-// services/api/client.js - Complete Enhanced API Client
+// Production-Grade API Client with Auto Session Management
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import CryptoJS from 'crypto-js';
 
 // Environment configuration
-const getApiConfig = () => {
-  const env = import.meta.env.MODE;
-
-  switch (env) {
-    case 'production':
-      return {
-        baseUrl: 'https://localhost:7020',
-        vendorApiUrl: 'http://erp.biharboardonline.com/ERP_DataAPI',
-        timeout: 30000,
-      };
-    case 'staging':
-      return {
-        baseUrl: 'https://localhost:7020',
-        vendorApiUrl: 'http://erp.biharboardonline.com/ERP_DataAPI',
-        timeout: 30000,
-      };
-    default:
-      return {
-        baseUrl: 'https://localhost:7020',
-        vendorApiUrl: 'http://erp.biharboardonline.com/ERP_DataAPI',
-        timeout: 30000,
-      };
-  }
-};
-
 const config = {
-  api: getApiConfig(),
+  api: {
+    baseUrl: 'https://localhost:7020',
+    timeout: 30000, // 30 seconds
+  },
   security: {
-    encryptionKey: import.meta.env.VITE_ENCRYPTION_KEY || 'BSEB-IFMS-2024-SECRET-KEY',
+    encryptionKey: 'BSEB-IFMS-2024-SECRET-KEY', // Should be from environment
   },
 };
 
@@ -66,7 +44,7 @@ const decrypt = (encryptedData) => {
 };
 
 // Enhanced session management
-export const sessionManager = {
+const sessionManager = {
   get: (key) => {
     try {
       const encryptedData = localStorage.getItem(key);
@@ -118,28 +96,29 @@ export const sessionManager = {
   isExpired: () => {
     const lastActivity = localStorage.getItem(STORAGE_KEYS.LAST_ACTIVITY);
     if (!lastActivity) {
+      // If no last activity recorded, check if we have session data
       const sessionId = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
       const userData = localStorage.getItem(STORAGE_KEYS.USER_DATA);
-      return !(sessionId && userData);
+      return !(sessionId && userData); // Not expired if we have session data
     }
 
-    const sessionTimeout = 8 * 60 * 60 * 1000; // 8 hours
+    const sessionTimeout = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
     return Date.now() - parseInt(lastActivity) > sessionTimeout;
   },
 };
 
 // Session data accessors
-export const getSessionId = () => sessionManager.get(STORAGE_KEYS.SESSION_ID);
-export const setSessionId = (sessionId) => sessionManager.set(STORAGE_KEYS.SESSION_ID, sessionId);
-export const getUserData = () => sessionManager.get(STORAGE_KEYS.USER_DATA);
-export const setUserData = (userData) => sessionManager.set(STORAGE_KEYS.USER_DATA, userData);
-export const clearSession = () => sessionManager.clear();
+const getSessionId = () => sessionManager.get(STORAGE_KEYS.SESSION_ID);
+const setSessionId = (sessionId) => sessionManager.set(STORAGE_KEYS.SESSION_ID, sessionId);
+const getUserData = () => sessionManager.get(STORAGE_KEYS.USER_DATA);
+const setUserData = (userData) => sessionManager.set(STORAGE_KEYS.USER_DATA, userData);
+const clearSession = () => sessionManager.clear();
 
-// Create axios instance
+// Create axios instance with enhanced configuration
 const apiClient = axios.create({
   baseURL: config.api.baseUrl,
   timeout: config.api.timeout,
-  withCredentials: true,
+  withCredentials: true, // Important for session cookies
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -147,23 +126,28 @@ const apiClient = axios.create({
   },
 });
 
-// Request interceptor
+// Request interceptor with enhanced security
 apiClient.interceptors.request.use(
   (requestConfig) => {
     const sessionId = getSessionId();
     const startTime = Date.now();
 
+    // Add session ID to headers if available
     if (sessionId) {
       requestConfig.headers['X-Session-Id'] = sessionId;
     }
 
+    // Add security headers
     requestConfig.headers['X-Timestamp'] = startTime;
     requestConfig.headers['X-Client-Version'] = '1.0.0';
 
+    // Add request ID for tracking
     const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     requestConfig.headers['X-Request-Id'] = requestId;
     requestConfig.metadata = { requestId, startTime };
 
+    // Session expiry check
+    // ✅ Session expiry check
     if (
       sessionManager.isExpired() &&
       requestConfig.url !== '/api/Auth/captcha' &&
@@ -171,11 +155,14 @@ apiClient.interceptors.request.use(
     ) {
       console.warn('Session expired, clearing local data');
       clearSession();
+      // यहां redirect मत करो, response interceptor handle करेगा
     }
 
+    // Development logging
     if (import.meta.env.DEV) {
-      console.group(`API Request: ${requestConfig.method?.toUpperCase()} ${requestConfig.url}`);
+      console.group(`🚀 API Request: ${requestConfig.method?.toUpperCase()} ${requestConfig.url}`);
       console.log('Request ID:', requestId);
+      console.log('Headers:', requestConfig.headers);
       if (requestConfig.data && requestConfig.url !== '/api/Auth/login') {
         console.log('Data:', requestConfig.data);
       }
@@ -190,32 +177,37 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Enhanced response interceptor
 apiClient.interceptors.response.use(
   (response) => {
     const requestId = response.config.metadata?.requestId;
     const duration = Date.now() - response.config.metadata?.startTime;
 
+    // Development logging
     if (import.meta.env.DEV) {
-      console.group(`API Response: ${response.config.url} (${duration}ms)`);
+      console.group(`✅ API Response: ${response.config.url} (${duration}ms)`);
       console.log('Request ID:', requestId);
       console.log('Status:', response.status);
       console.log('Data:', response.data);
       console.groupEnd();
     }
 
+    // Auto-store session data from response headers or data
     const newSessionId = response.headers['x-session-id'] || response.data?.sessionId;
     if (newSessionId && newSessionId !== getSessionId()) {
       setSessionId(newSessionId);
-      console.log('Session ID updated from response');
+      console.log('📝 Session ID updated from response');
     }
 
+    // Auto-store user data if present
     if (response.data?.user) {
       setUserData(response.data.user);
-      console.log('User data updated from response');
+      console.log('👤 User data updated from response');
     }
 
+    // Update last activity timestamp
     sessionManager.set(STORAGE_KEYS.LAST_ACTIVITY, Date.now());
+
     return response;
   },
   async (error) => {
@@ -223,8 +215,9 @@ apiClient.interceptors.response.use(
     const requestId = requestConfig?.metadata?.requestId;
     const duration = Date.now() - (requestConfig?.metadata?.startTime || 0);
 
+    // Development error logging
     if (import.meta.env.DEV) {
-      console.group(`API Error: ${requestConfig?.url} (${duration}ms)`);
+      console.group(`❌ API Error: ${requestConfig?.url} (${duration}ms)`);
       console.log('Request ID:', requestId);
       console.log('Status:', response?.status);
       console.log('Error:', error.message);
@@ -232,14 +225,17 @@ apiClient.interceptors.response.use(
       console.groupEnd();
     }
 
+    // Enhanced error handling based on status codes
     if (response) {
       const { status, data } = response;
 
       switch (status) {
         case 400:
+          // Bad Request - Validation errors
           if (data?.errors) {
             const errorMessages = Object.values(data.errors).flat();
             errorMessages.slice(0, 3).forEach((msg) => {
+              // Limit to 3 messages
               toast.error(msg, { duration: 5000 });
             });
           } else if (data?.message) {
@@ -250,12 +246,15 @@ apiClient.interceptors.response.use(
           break;
 
         case 401:
-          console.warn('Authentication failed - clearing session');
+          // Unauthorized - Session expired or invalid
+          console.warn('🔐 Authentication failed - clearing session');
           clearSession();
           toast.error('Your session has expired. Please login again.', {
             duration: 6000,
+            icon: '🔐',
           });
 
+          // Redirect to login after a short delay
           setTimeout(() => {
             if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
               window.location.href = '/login';
@@ -264,24 +263,29 @@ apiClient.interceptors.response.use(
           break;
 
         case 403:
+          // Forbidden - Insufficient permissions
           toast.error('Access denied. You do not have permission for this action.', {
             duration: 5000,
+            icon: '🚫',
           });
           break;
 
         case 404:
+          // Not Found
           if (!requestConfig?.silent) {
             toast.error('Requested resource not found.', { duration: 4000 });
           }
           break;
 
         case 409:
+          // Conflict - Usually duplicate data
           toast.error(data?.message || 'Data conflict occurred. Please refresh and try again.', {
             duration: 5000,
           });
           break;
 
         case 422:
+          // Unprocessable Entity - Validation failed
           if (data?.errors) {
             const errorMessages = Object.values(data.errors).flat();
             errorMessages.slice(0, 2).forEach((msg) => {
@@ -295,10 +299,12 @@ apiClient.interceptors.response.use(
           break;
 
         case 429: {
+          // ⏳ Too Many Requests - Rate limiting
           const retryAfterHeader = response.headers?.['retry-after'];
           let waitTimeMessage = 'a moment';
 
           if (retryAfterHeader) {
+            // retry-after कभी number (seconds) होता है, कभी date (timestamp)
             const retryAfterSeconds = parseInt(retryAfterHeader, 10);
             if (!isNaN(retryAfterSeconds)) {
               waitTimeMessage = `${retryAfterSeconds} second${retryAfterSeconds > 1 ? 's' : ''}`;
@@ -307,7 +313,7 @@ apiClient.interceptors.response.use(
             }
           }
 
-          toast.error(`Too many requests. Please wait ${waitTimeMessage} and try again.`, {
+          toast.error(`⏳ Too many requests. Please wait ${waitTimeMessage} and try again.`, {
             duration: 8000,
           });
           break;
@@ -317,9 +323,13 @@ apiClient.interceptors.response.use(
         case 502:
         case 503:
         case 504:
+          // Server errors
           toast.error(
             'Server error occurred. Our team has been notified. Please try again later.',
-            { duration: 6000 }
+            {
+              duration: 6000,
+              icon: '🔧',
+            }
           );
           break;
 
@@ -331,13 +341,16 @@ apiClient.interceptors.response.use(
           }
       }
     } else {
+      // Network or other errors
       if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
         toast.error('Request timeout. Please check your connection and try again.', {
           duration: 5000,
+          icon: '⏱️',
         });
       } else if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
         toast.error('Network connection failed. Please check your internet connection.', {
           duration: 6000,
+          icon: '🌐',
         });
       } else {
         toast.error('An unexpected error occurred. Please try again.', {
@@ -350,13 +363,13 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Enhanced CAPTCHA fetching
+// Enhanced CAPTCHA fetching with retry logic
 const fetchCaptcha = async (retryCount = 0) => {
   try {
-    console.log(`Fetching CAPTCHA (attempt ${retryCount + 1})...`);
+    console.log(`🔄 Fetching CAPTCHA (attempt ${retryCount + 1})...`);
 
     const response = await apiClient.get('/api/Auth/captcha', {
-      timeout: 15000,
+      timeout: 15000, // 15 seconds for CAPTCHA
       headers: {
         'Cache-Control': 'no-cache',
         Pragma: 'no-cache',
@@ -367,7 +380,7 @@ const fetchCaptcha = async (retryCount = 0) => {
       throw new Error('Invalid CAPTCHA response from server');
     }
 
-    console.log('CAPTCHA fetched successfully:', {
+    console.log('✅ CAPTCHA fetched successfully:', {
       hasImage: !!response.data.image,
       sessionId: response.data.sessionId?.substring(0, 20) + '...',
       expiresIn: response.data.expiresInSeconds || 300,
@@ -375,10 +388,11 @@ const fetchCaptcha = async (retryCount = 0) => {
 
     return response.data;
   } catch (error) {
-    console.error(`CAPTCHA fetch failed (attempt ${retryCount + 1}):`, error);
+    console.error(`❌ CAPTCHA fetch failed (attempt ${retryCount + 1}):`, error);
 
+    // Retry logic for CAPTCHA
     if (retryCount < 2 && (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK')) {
-      console.log(`Retrying CAPTCHA fetch in ${(retryCount + 1) * 2} seconds...`);
+      console.log(`🔄 Retrying CAPTCHA fetch in ${(retryCount + 1) * 2} seconds...`);
       await new Promise((resolve) => setTimeout(resolve, (retryCount + 1) * 2000));
       return fetchCaptcha(retryCount + 1);
     }
@@ -387,13 +401,14 @@ const fetchCaptcha = async (retryCount = 0) => {
   }
 };
 
-// Main API object
+// Production-grade API object
 export const api = {
-  // CAPTCHA
+  // Enhanced CAPTCHA method
   getCaptcha: fetchCaptcha,
 
-  // Authentication
+  // Enhanced authentication methods
   login: async (credentials) => {
+    // Input validation
     const requiredFields = ['sessionId', 'captcha', 'password'];
     for (const field of requiredFields) {
       if (!credentials[field]) {
@@ -401,11 +416,13 @@ export const api = {
       }
     }
 
+    // Build query parameters exactly as working version
     const queryParams = new URLSearchParams({
       sessionId: credentials.sessionId,
       captcha: credentials.captcha,
     });
 
+    // Build request body exactly as working version
     const loginData = {
       id: 0,
       username: credentials.username || credentials.email || '',
@@ -417,7 +434,7 @@ export const api = {
     };
 
     try {
-      console.log('Login request:', {
+      console.log('🔐 Login request:', {
         url: `/api/Auth/login?${queryParams}`,
         username: loginData.username,
         email: loginData.email,
@@ -425,14 +442,15 @@ export const api = {
         sessionId: credentials.sessionId?.substring(0, 20) + '...',
       });
 
+      // Make API call with exact same structure as working version
       const response = await apiClient.post(`/api/Auth/login?${queryParams}`, loginData, {
         headers: {
           'Content-Type': 'application/json-patch+json',
         },
-        timeout: 20000,
+        timeout: 20000, // 20 seconds for login
       });
 
-      console.log('Login API successful:', {
+      console.log('✅ Login API successful:', {
         status: response.status,
         hasData: !!response.data,
         hasUser: !!response.data?.user,
@@ -441,7 +459,7 @@ export const api = {
 
       return response;
     } catch (error) {
-      console.error('Login API failed:', {
+      console.error('🚫 Login API failed:', {
         status: error.response?.status,
         message: error.message,
         data: error.response?.data,
@@ -450,26 +468,30 @@ export const api = {
     }
   },
 
+  // Enhanced logout
   logout: async () => {
     try {
-      console.log('Logout request...');
+      console.log('🔄 Logout request...');
       await apiClient.post(
         '/api/Auth/logout',
         {},
         {
           timeout: 10000,
-          silent: true,
+          silent: true, // Don't show error toasts for logout
         }
       );
-      console.log('Logout API successful');
+      console.log('✅ Logout API successful');
     } catch (error) {
-      console.warn('Logout API failed:', error.message);
+      console.warn('⚠️ Logout API failed:', error.message);
+      // Continue with local cleanup even if API fails
     } finally {
       clearSession();
     }
   },
 
-  // Session management
+  // Session validation
+  // Session validation - simplified version
+  // Session validation - Local check only
   validateSession: async () => {
     try {
       const sessionId = getSessionId();
@@ -485,20 +507,21 @@ export const api = {
         return false;
       }
 
-      console.log('Session validation successful');
+      console.log('✅ Session validation successful');
       return true;
     } catch (error) {
       console.warn('Session validation failed:', error.message);
       return false;
     }
   },
-
+  // Authentication status
   isAuthenticated: () => {
     const sessionId = getSessionId();
     const userData = getUserData();
     return !!(sessionId && userData && !sessionManager.isExpired());
   },
 
+  // Get current user with validation
   getCurrentUser: () => {
     if (sessionManager.isExpired()) {
       clearSession();
@@ -507,24 +530,25 @@ export const api = {
     return getUserData();
   },
 
+  // Session management utilities
   refreshSession: () => {
     sessionManager.set(STORAGE_KEYS.LAST_ACTIVITY, Date.now());
   },
 
-  // HTTP methods
+  // Generic HTTP methods with enhanced error handling
   get: (url, config = {}) => apiClient.get(url, config),
   post: (url, data, config = {}) => apiClient.post(url, data, config),
   put: (url, data, config = {}) => apiClient.put(url, data, config),
   patch: (url, data, config = {}) => apiClient.patch(url, data, config),
   delete: (url, config = {}) => apiClient.delete(url, config),
 
-  // File upload
+  // File upload with progress tracking
   upload: (url, formData, onUploadProgress) => {
     return apiClient.post(url, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      timeout: 300000, // 5 minutes
+      timeout: 300000, // 5 minutes for uploads
       onUploadProgress: (progressEvent) => {
         if (onUploadProgress) {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -546,140 +570,16 @@ export const api = {
   },
 };
 
-// Vendor Payment APIs
-export const workOrderApi = {
-  // Work Orders
-  getWorkOrders: () => api.get('/api/WorkOrders'),
-  getWorkOrder: (id) => api.get(`/api/WorkOrders/${id}`),
-
-  createWorkOrder: (data, onUploadProgress) => {
-    if (data instanceof FormData) {
-      return api.upload('/api/WorkOrders/create', data, onUploadProgress);
-    }
-    return api.post('/api/WorkOrders/create', data);
-  },
-
-  updateWorkOrder: (data, onUploadProgress) => {
-    if (data instanceof FormData) {
-      return api.upload('/api/WorkOrders/update', data, onUploadProgress);
-    }
-    return api.post('/api/WorkOrders/update', data);
-  },
-
-  deleteWorkOrder: (id) => api.post(`/api/WorkOrders/delete/${id}`),
-
-  // Invoices
-  getInvoices: () => api.get('/api/Invoice'),
-  getInvoice: (id) => api.get(`/api/Invoice/${id}`),
-
-  submitInvoice: (invoiceData) => api.post('/api/Invoice/submit', invoiceData),
-  updateInvoice: (invoiceData) => api.post('/api/Invoice/update', invoiceData),
-
-  returnInvoice: (id, remark) => api.post('/api/Invoice/return', { id, remark }),
-
-  recommendInvoice: (id, departmentId, remark, updatedBy) => {
-    if (!departmentId || !updatedBy) {
-      throw new Error('Department ID and Updated By are required for recommendation');
-    }
-    return api.post(`/api/Invoice/recommend/${id}`, {
-      departmentId,
-      remark: remark || '',
-      updatedBy,
-    });
-  },
-
-  updateInvoiceStatus: (id, status, remark = '') => {
-    const validStatuses = [0, 1, 2, 5, 9, -1];
-    if (!validStatuses.includes(status)) {
-      throw new Error(`Invalid status: ${status}. Valid values are: ${validStatuses.join(', ')}`);
-    }
-    return api.post('/api/Invoice/status', { id, status, remark });
-  },
-
-  // Department/Vendor filtering
-  getInvoicesByDepartment: (departmentId, status) => {
-    if (!departmentId) {
-      throw new Error('Department ID is required');
-    }
-    return api.get(`/api/Invoice/bydepartment/${departmentId}/${status}`);
-  },
-
-  getInvoicesByVendor: (vendorId) => {
-    if (!vendorId) {
-      throw new Error('Vendor ID is required');
-    }
-    return api.get(`/api/Invoice/byvendor/${vendorId}`);
-  },
-
-  // Master data
-  getVendors: async () => {
-    try {
-      const response = await api.get(
-        `${config.api.vendorApiUrl}/api/Employee/GetVendorCardDetails`
-      );
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch vendors from ERP API, trying fallback:', error);
-      return api.get('/VendorCardDetails');
-    }
-  },
-
-  getDepartments: () => api.get('/departments'),
-};
-
-// Vendor APIs
-const VENDOR_URL = 'http://erp.biharboardonline.com/ERP_DataAPI/api/Employee/GetVendorCardDetails';
-
-export const vendorAPI = {
-  // Get all vendors
-  getAll: async () => {
-    try {
-      const response = await axios.get(VENDOR_URL);
-      // API returns nested structure
-      const vendorData = response.data?.GetVendorDetails || [];
-
-      // Flatten the structure to get VendorCardDetails array
-      const vendors = vendorData.flatMap((item) => item.VendorCardDetails || []);
-
-      return vendors;
-    } catch (error) {
-      console.error('Vendor API Error:', error);
-      throw new Error('Failed to fetch vendors');
-    }
-  },
-
-  // Get vendor by No_
-  getByNo: async (vendorNo) => {
-    try {
-      const vendors = await vendorAPI.getAll();
-      return vendors.find((v) => v.No_ === vendorNo);
-    } catch (error) {
-      throw new Error('Failed to fetch vendor details');
-    }
-  },
-};
-
-// Department APIs
-export const departmentAPI = {
-  // Get all departments
-  getAll: async () => {
-    try {
-      const response = await api.get(`$/User/departments`);
-      return response.data;
-    } catch (error) {
-      throw new Error('Failed to fetch departments');
-    }
-  },
-
-  // Get department by ID
-  getById: async (id) => {
-    try {
-      const departments = await departmentAPI.getAll();
-      return departments.find((d) => d.id === id);
-    } catch (error) {
-      throw new Error('Failed to fetch department');
-    }
-  },
+// Export session management functions
+export {
+  getSessionId,
+  setSessionId,
+  getUserData,
+  setUserData,
+  clearSession,
+  encrypt,
+  decrypt,
+  sessionManager,
 };
 
 export default apiClient;

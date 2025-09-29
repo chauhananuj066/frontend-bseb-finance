@@ -1,6 +1,6 @@
 // Enhanced Production-Grade Auth Slice
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { api } from '../../services/api/client.js';
+import { api, sessionManager } from '@/services/api/client.js';
 import { toast } from 'react-hot-toast';
 
 // Enhanced async thunk for CAPTCHA with error handling

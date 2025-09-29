@@ -1,436 +1,4 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-
-
-
-
-```
-bseb-finance-frontend
-├─ .env
-├─ .env.development
-├─ .env.production
-├─ .eslintrc.cjs
-├─ .prettierrc
-├─ docs
-│  ├─ api
-│  ├─ components
-│  ├─ deployment
-│  └─ development
-├─ index.html
-├─ jsconfig.json
-├─ package-lock.json
-├─ package.json
-├─ public
-│  └─ assets
-│     ├─ documents
-│     ├─ icons
-│     └─ images
-│        ├─ avatars
-│        │  └─ bseb-logo.png
-│        ├─ backgrounds
-│        ├─ illustrations
-│        └─ logos
-│           ├─ bseb-logo copy.png
-│           └─ bseb-logo.png
-├─ README.md
-├─ src
-│  ├─ App.css
-│  ├─ App.jsx
-│  ├─ assets
-│  ├─ components
-│  │  ├─ common
-│  │  │  ├─ ErrorBoundary
-│  │  │  │  └─ ErrorBoundary.jsx
-│  │  │  ├─ Layout
-│  │  │  │  ├─ AdminLayout.jsx
-│  │  │  │  └─ AuthLayout.jsx
-│  │  │  ├─ Navigation
-│  │  │  │  ├─ Sidebar copy 2.jsx
-│  │  │  │  ├─ Sidebar copy 2.scss
-│  │  │  │  ├─ Sidebar copy.jsx
-│  │  │  │  ├─ Sidebar copy.scss
-│  │  │  │  ├─ Sidebar.jsx
-│  │  │  │  ├─ Sidebar.scss
-│  │  │  │  └─ TopNavbar.jsx
-│  │  │  ├─ ProtectedRoute
-│  │  │  │  └─ ProtectedRoute.jsx
-│  │  │  └─ UI
-│  │  │     ├─ Button
-│  │  │     │  ├─ Button.jsx
-│  │  │     │  └─ Button.scss
-│  │  │     ├─ Cards
-│  │  │     │  ├─ StatsCard.jsx
-│  │  │     │  └─ StatsCard.scss
-│  │  │     ├─ Form
-│  │  │     │  ├─ FormFileUpload.jsx
-│  │  │     │  ├─ FormFileUpload.scss
-│  │  │     │  ├─ FormInput.jsx
-│  │  │     │  └─ FormSelect.jsx
-│  │  │     └─ Table
-│  │  │        ├─ DataTable copy.jsx
-│  │  │        ├─ DataTable.jsx
-│  │  │        └─ DataTable.scss
-│  │  └─ features
-│  │     ├─ auth
-│  │     ├─ dashboard
-│  │     ├─ departments
-│  │     ├─ invoices
-│  │     │  └─ InvoiceStatusBadge.jsx
-│  │     ├─ payments
-│  │     ├─ users
-│  │     ├─ vendors
-│  │     └─ workorders
-│  ├─ config
-│  │  └─ environment.js
-│  ├─ context
-│  ├─ hooks
-│  │  ├─ api
-│  │  │  ├─ useAuth.js
-│  │  │  ├─ useDashbaord.js
-│  │  │  ├─ useInvoices.js
-│  │  │  └─ useUsers.js
-│  │  └─ common
-│  │     └─ useDebounce.js
-│  ├─ index.css
-│  ├─ main.jsx
-│  ├─ pages
-│  │  ├─ auth
-│  │  │  └─ LoginForm.jsx
-│  │  ├─ dashboard
-│  │  │  ├─ Dashboard copy.jsx
-│  │  │  ├─ Dashboard.jsx
-│  │  │  ├─ Dashboard.scss
-│  │  │  ├─ DashboardStats.jsx
-│  │  │  ├─ PaymentSummary.jsx
-│  │  │  ├─ PendingApprovals.jsx
-│  │  │  ├─ RecentInvoices.jsx
-│  │  │  └─ RevenueChart.jsx
-│  │  ├─ departments
-│  │  │  ├─ DepartmentForm copy.jsx
-│  │  │  ├─ DepartmentForm.jsx
-│  │  │  ├─ DepartmentsPage copy.jsx
-│  │  │  └─ DepartmentsPage.jsx
-│  │  ├─ error
-│  │  ├─ invoices
-│  │  │  ├─ InvoicePage.jsx
-│  │  │  └─ InvoicePage.scss
-│  │  ├─ payments
-│  │  ├─ reports
-│  │  ├─ settings
-│  │  ├─ users
-│  │  │  ├─ CreateUser copy.jsx
-│  │  │  ├─ CreateUser.jsx
-│  │  │  ├─ EditUser copy.jsx
-│  │  │  ├─ EditUser.jsx
-│  │  │  ├─ UserForm copy.jsx
-│  │  │  ├─ UserForm.jsx
-│  │  │  ├─ UsersPage copy.jsx
-│  │  │  └─ UsersPage.jsx
-│  │  ├─ vendors
-│  │  └─ workorders
-│  ├─ routes
-│  │  ├─ AppRoutes copy 2.jsx
-│  │  ├─ AppRoutes copy.jsx
-│  │  └─ AppRoutes.jsx
-│  ├─ services
-│  │  ├─ api
-│  │  │  ├─ auth.js
-│  │  │  ├─ client.js
-│  │  │  ├─ dashboard.js
-│  │  │  ├─ invoices.js
-│  │  │  └─ users.js
-│  │  ├─ api.js
-│  │  ├─ mockData.js
-│  │  └─ utils
-│  │     ├─ etc
-│  │     └─ Validators
-│  ├─ store
-│  │  ├─ middleware
-│  │  ├─ slices
-│  │  │  ├─ authSlice.js
-│  │  │  └─ uiSlice.js
-│  │  └─ store.js
-│  ├─ styles
-│  │  ├─ etc
-│  │  └─ scss
-│  │     ├─ abstracts
-│  │     │  ├─ _index.scss
-│  │     │  ├─ _mixins.scss
-│  │     │  └─ _variables.scss
-│  │     ├─ base
-│  │     │  ├─ _fonts.scss
-│  │     │  ├─ _index.scss
-│  │     │  ├─ _reset.scss
-│  │     │  └─ _typography.scss
-│  │     ├─ components
-│  │     │  ├─ _buttons.scss
-│  │     │  ├─ _cards.scss
-│  │     │  ├─ _index.scss
-│  │     │  └─ _modals.scss
-│  │     ├─ layout
-│  │     │  ├─ _footer.scss
-│  │     │  ├─ _header.scss
-│  │     │  ├─ _index.scss
-│  │     │  └─ _sidebar.scss
-│  │     ├─ main.scss
-│  │     ├─ pages
-│  │     │  ├─ _auth.scss
-│  │     │  ├─ _dashboard.scss
-│  │     │  ├─ _index.scss
-│  │     │  ├─ _users copy.scss
-│  │     │  └─ _users.scss
-│  │     ├─ themes
-│  │     │  ├─ _dark.scss
-│  │     │  ├─ _index.scss
-│  │     │  └─ _light.scss
-│  │     └─ utilities
-│  │        ├─ _helpers.scss
-│  │        ├─ _index.scss
-│  │        ├─ _shadows.scss
-│  │        └─ _spacing.scss
-│  └─ utils
-│     ├─ constants
-│     │  └─ index.js
-│     ├─ helpers
-│     │  └─ formatHelpers.js
-│     ├─ performance
-│     │  └─ lazyLoader.js
-│     ├─ security
-│     └─ validators
-│        ├─ authValidation.js
-│        ├─ invoiceValidation.js
-│        └─ userValidation.js
-├─ tests
-│  ├─ components
-│  ├─ hooks
-│  ├─ services
-│  ├─ utils
-│  └─ __mocks__
-└─ vite.config.js
-
-```
-```
-bseb-finance-frontend
-├─ .env
-├─ .env.development
-├─ .env.production
-├─ .eslintrc.cjs
-├─ .prettierrc
-├─ docs
-│  ├─ api
-│  ├─ components
-│  ├─ deployment
-│  └─ development
-├─ index.html
-├─ jsconfig.json
-├─ package-lock.json
-├─ package.json
-├─ public
-│  └─ assets
-│     ├─ documents
-│     ├─ icons
-│     └─ images
-│        ├─ avatars
-│        │  └─ bseb-logo.png
-│        ├─ backgrounds
-│        ├─ illustrations
-│        └─ logos
-│           ├─ bseb-logo copy.png
-│           └─ bseb-logo.png
-├─ README.md
-├─ src
-│  ├─ App.css
-│  ├─ App.jsx
-│  ├─ assets
-│  ├─ components
-│  │  ├─ common
-│  │  │  ├─ ErrorBoundary
-│  │  │  │  └─ ErrorBoundary.jsx
-│  │  │  ├─ Layout
-│  │  │  │  ├─ AdminLayout.jsx
-│  │  │  │  └─ AuthLayout.jsx
-│  │  │  ├─ Navigation
-│  │  │  │  ├─ Sidebar copy 2.jsx
-│  │  │  │  ├─ Sidebar copy 2.scss
-│  │  │  │  ├─ Sidebar copy.jsx
-│  │  │  │  ├─ Sidebar copy.scss
-│  │  │  │  ├─ Sidebar.jsx
-│  │  │  │  ├─ Sidebar.scss
-│  │  │  │  └─ TopNavbar.jsx
-│  │  │  ├─ ProtectedRoute
-│  │  │  │  └─ ProtectedRoute.jsx
-│  │  │  └─ UI
-│  │  │     ├─ Button
-│  │  │     │  ├─ Button.jsx
-│  │  │     │  └─ Button.scss
-│  │  │     ├─ Cards
-│  │  │     │  ├─ StatsCard.jsx
-│  │  │     │  └─ StatsCard.scss
-│  │  │     ├─ Form
-│  │  │     │  ├─ FormFileUpload.jsx
-│  │  │     │  ├─ FormFileUpload.scss
-│  │  │     │  ├─ FormInput.jsx
-│  │  │     │  └─ FormSelect.jsx
-│  │  │     ├─ Loading
-│  │  │     │  └─ Spinner.jsx
-│  │  │     └─ Table
-│  │  │        ├─ DataTable copy.jsx
-│  │  │        ├─ DataTable.jsx
-│  │  │        └─ DataTable.scss
-│  │  └─ features
-│  │     ├─ auth
-│  │     ├─ dashboard
-│  │     ├─ departments
-│  │     ├─ invoices
-│  │     │  └─ InvoiceStatusBadge.jsx
-│  │     ├─ payments
-│  │     ├─ users
-│  │     ├─ vendors
-│  │     └─ workorders
-│  ├─ config
-│  │  └─ environment.js
-│  ├─ context
-│  ├─ hooks
-│  │  ├─ api
-│  │  │  ├─ useAuth.js
-│  │  │  ├─ useDashbaord.js
-│  │  │  ├─ useInvoices.js
-│  │  │  └─ useUsers.js
-│  │  └─ common
-│  │     └─ useDebounce.js
-│  ├─ index.css
-│  ├─ main.jsx
-│  ├─ pages
-│  │  ├─ auth
-│  │  │  └─ LoginForm.jsx
-│  │  ├─ dashboard
-│  │  │  ├─ Dashboard copy.jsx
-│  │  │  ├─ Dashboard.jsx
-│  │  │  ├─ Dashboard.scss
-│  │  │  ├─ DashboardStats.jsx
-│  │  │  ├─ PaymentSummary.jsx
-│  │  │  ├─ PendingApprovals.jsx
-│  │  │  ├─ RecentInvoices.jsx
-│  │  │  └─ RevenueChart.jsx
-│  │  ├─ departments
-│  │  │  ├─ DepartmentForm copy.jsx
-│  │  │  ├─ DepartmentForm.jsx
-│  │  │  ├─ DepartmentsPage copy.jsx
-│  │  │  └─ DepartmentsPage.jsx
-│  │  ├─ error
-│  │  ├─ invoices
-│  │  │  ├─ InvoicePage.jsx
-│  │  │  └─ InvoicePage.scss
-│  │  ├─ payments
-│  │  ├─ reports
-│  │  ├─ settings
-│  │  ├─ users
-│  │  │  ├─ CreateUser copy.jsx
-│  │  │  ├─ CreateUser.jsx
-│  │  │  ├─ EditUser copy.jsx
-│  │  │  ├─ EditUser.jsx
-│  │  │  ├─ UserForm copy.jsx
-│  │  │  ├─ UserForm.jsx
-│  │  │  ├─ UsersPage copy.jsx
-│  │  │  └─ UsersPage.jsx
-│  │  ├─ vendors
-│  │  └─ workorders
-│  ├─ routes
-│  │  ├─ AppRoutes copy 2.jsx
-│  │  ├─ AppRoutes copy.jsx
-│  │  └─ AppRoutes.jsx
-│  ├─ services
-│  │  ├─ api
-│  │  │  ├─ auth.js
-│  │  │  ├─ client.js
-│  │  │  ├─ dashboard.js
-│  │  │  ├─ invoices.js
-│  │  │  └─ users.js
-│  │  ├─ api.js
-│  │  ├─ mockData.js
-│  │  └─ utils
-│  │     ├─ etc
-│  │     └─ Validators
-│  ├─ store
-│  │  ├─ middleware
-│  │  ├─ slices
-│  │  │  ├─ authSlice.js
-│  │  │  └─ uiSlice.js
-│  │  └─ store.js
-│  ├─ styles
-│  │  ├─ etc
-│  │  └─ scss
-│  │     ├─ abstracts
-│  │     │  ├─ _index.scss
-│  │     │  ├─ _mixins.scss
-│  │     │  └─ _variables.scss
-│  │     ├─ base
-│  │     │  ├─ _fonts.scss
-│  │     │  ├─ _index.scss
-│  │     │  ├─ _reset.scss
-│  │     │  └─ _typography.scss
-│  │     ├─ components
-│  │     │  ├─ _buttons.scss
-│  │     │  ├─ _cards.scss
-│  │     │  ├─ _index.scss
-│  │     │  └─ _modals.scss
-│  │     ├─ layout
-│  │     │  ├─ _footer.scss
-│  │     │  ├─ _header.scss
-│  │     │  ├─ _index.scss
-│  │     │  └─ _sidebar.scss
-│  │     ├─ main.scss
-│  │     ├─ pages
-│  │     │  ├─ _auth.scss
-│  │     │  ├─ _dashboard.scss
-│  │     │  ├─ _index.scss
-│  │     │  ├─ _users copy.scss
-│  │     │  └─ _users.scss
-│  │     ├─ themes
-│  │     │  ├─ _dark.scss
-│  │     │  ├─ _index.scss
-│  │     │  └─ _light.scss
-│  │     └─ utilities
-│  │        ├─ _helpers.scss
-│  │        ├─ _index.scss
-│  │        ├─ _shadows.scss
-│  │        └─ _spacing.scss
-│  └─ utils
-│     ├─ constants
-│     │  └─ index.js
-│     ├─ helpers
-│     │  └─ formatHelpers.js
-│     ├─ performance
-│     │  └─ lazyLoader.jsx
-│     ├─ security
-│     └─ validators
-│        ├─ authValidation.js
-│        ├─ invoiceValidation.js
-│        └─ userValidation.js
-├─ tests
-│  ├─ components
-│  ├─ hooks
-│  ├─ services
-│  ├─ utils
-│  └─ __mocks__
-└─ vite.config.js
-
-```
 ```
 bseb-finance-frontend
 ├─ .env
@@ -505,15 +73,30 @@ bseb-finance-frontend
 │  │  │  │     └─ DataTable.scss
 │  │  │  └─ UnauthorizedPage.jsx
 │  │  └─ features
+│  │     ├─ audit
 │  │     ├─ auth
 │  │     ├─ dashboard
 │  │     ├─ departments
+│  │     ├─ inflow-funds
 │  │     ├─ invoices
 │  │     │  └─ InvoiceStatusBadge.jsx
+│  │     ├─ outflow-funds
 │  │     ├─ payments
+│  │     │  ├─ employee-advances
+│  │     │  ├─ grants
+│  │     │  └─ vendor-payments
+│  │     ├─ tally-integration
 │  │     ├─ users
 │  │     ├─ vendors
 │  │     └─ workorders
+│  │        ├─ create
+│  │        │  ├─ components
+│  │        │  ├─ hooks
+│  │        │  │  └─ useWorkOrderForm.js
+│  │        │  └─ sections
+│  │        ├─ detail
+│  │        ├─ list
+│  │        └─ shared
 │  ├─ config
 │  │  └─ environment.js
 │  ├─ context
@@ -521,8 +104,11 @@ bseb-finance-frontend
 │  │  ├─ api
 │  │  │  ├─ useAuth.js
 │  │  │  ├─ useDashbaord.js
+│  │  │  ├─ useDepartments.js
 │  │  │  ├─ useInvoices.js
-│  │  │  └─ useUsers.js
+│  │  │  ├─ useUsers.js
+│  │  │  ├─ useVendors.js
+│  │  │  └─ useWorkOrders.js
 │  │  └─ common
 │  │     └─ useDebounce.js
 │  ├─ index.css
@@ -566,6 +152,10 @@ bseb-finance-frontend
 │  │  │  └─ UsersPage.jsx
 │  │  ├─ vendors
 │  │  └─ workorders
+│  │     ├─ CreateWorkOrder.jsx
+│  │     ├─ index.js
+│  │     ├─ WorkOrderDetail.jsx
+│  │     └─ WorkOrdersList.jsx
 │  ├─ routes
 │  │  ├─ AppRoutes copy 2.jsx
 │  │  ├─ AppRoutes copy.jsx
@@ -576,8 +166,11 @@ bseb-finance-frontend
 │  │  │  ├─ client copy.js
 │  │  │  ├─ client.js
 │  │  │  ├─ dashboard.js
+│  │  │  ├─ departments.js
 │  │  │  ├─ invoices.js
-│  │  │  └─ users.js
+│  │  │  ├─ users.js
+│  │  │  ├─ vendors.js
+│  │  │  └─ workorders.js
 │  │  ├─ api.js
 │  │  ├─ mockData.js
 │  │  └─ utils
@@ -588,7 +181,8 @@ bseb-finance-frontend
 │  │  ├─ slices
 │  │  │  ├─ authSlice copy.js
 │  │  │  ├─ authSlice.js
-│  │  │  └─ uiSlice.js
+│  │  │  ├─ uiSlice.js
+│  │  │  └─ workOrderSlice.js
 │  │  └─ store.js
 │  ├─ styles
 │  │  ├─ etc
@@ -639,7 +233,8 @@ bseb-finance-frontend
 │     └─ validators
 │        ├─ authValidation.js
 │        ├─ invoiceValidation.js
-│        └─ userValidation.js
+│        ├─ userValidation.js
+│        └─ workOrderValidation.js
 ├─ tests
 │  ├─ components
 │  ├─ hooks
